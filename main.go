@@ -42,6 +42,7 @@ func main() {
 	s.Every(15).Seconds().Do(func() {
 		PublishCPU(client, bucket, org, server)
 		PublishMem(client, bucket, org, server)
+		PublishDisk(client, bucket, org, server)
 	})
 
 	s.StartBlocking()

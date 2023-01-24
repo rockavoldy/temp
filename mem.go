@@ -33,7 +33,7 @@ func publishMemUsage(ctx context.Context, client influxdb2.Client, bucket, org, 
 	}
 }
 
-func getMemUsage() (free uint64, usage float64) {
+func getMemUsage() (uint64, float64) {
 	virMem, err := mem.VirtualMemory()
 	if err != nil {
 		log.Fatalln(err)
