@@ -39,8 +39,9 @@ func main() {
 	// run cron every 5 seconds
 	s := gocron.NewScheduler(time.UTC)
 	fmt.Println("Starting scheduler...")
-	s.Every(5).Seconds().Do(func() {
+	s.Every(15).Seconds().Do(func() {
 		PublishCPU(client, bucket, org, server)
+		PublishMem(client, bucket, org, server)
 	})
 
 	s.StartBlocking()
