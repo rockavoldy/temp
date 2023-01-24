@@ -3,12 +3,13 @@
 This is a simple script that reads the CPU temperature from a debian/ubuntu, and publishes it to an InfluxDB v2 database.
 
 ## How to run
-Set your credentials to the InfluxDB first by export the env variables
+Set your credentials to the InfluxDB first by export the env variables (or use `example.env` from this repo)
 ```bash
 export INFLUX_URL=http://localhost:8086
 export INFLUX_TOKEN=<your-influxdb-token>
 export INFLUX_BUCKET=<bucket-name>
 export INFLUX_ORG=<org-name>
+export INFLUX_TAG_SERVER=<tag_server>
 ```
 Then run the app
 ```bash
