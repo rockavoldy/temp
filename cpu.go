@@ -9,6 +9,7 @@ import (
 	"time"
 
 	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
+	"github.com/shirou/gopsutil/v3/cpu"
 	"github.com/shirou/gopsutil/v3/load"
 )
 
@@ -68,12 +69,17 @@ func getCpuTemp() int {
 	return outputInt / 1000.0
 }
 
-// getCpuLoad reads the cpu load from the system
+// getCpuLoad reads the cpu average load in 1 minute, then convert to a percentage
 // only to be called by the publicCpuLoad function
 func getCpuLoad() float64 {
 	avgStat, err := load.Avg()
 	if err != nil {
 		log.Fatalln(err)
 	}
-	return avgStat.Load5
+	// including hyper-threading
+	cpuCount, err := cpu.Counts(true)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	return avgStat.Load1 / float64(cpuCount) * 100
 }
