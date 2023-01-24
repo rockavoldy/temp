@@ -32,6 +32,10 @@ func main() {
 	if !ok {
 		log.Fatalln("INFLUX_ORG not set")
 	}
+	server, ok := os.LookupEnv("INFLUX_TAG_SERVER")
+	if !ok {
+		log.Fatalln("INFLUX_TAG_SERVER not set")
+	}
 
 	client := influxdb2.NewClient(url, token)
 	defer client.Close()
@@ -40,18 +44,18 @@ func main() {
 	s := gocron.NewScheduler(time.UTC)
 	fmt.Println("Starting scheduler...")
 	s.Every(5).Seconds().Do(func() {
-		publishCpuTemp(client, bucket, org)
+		publishCpuTemp(client, bucket, org, server)
 	})
 
 	s.StartBlocking()
 }
 
-func publishCpuTemp(client influxdb2.Client, bucket string, org string) {
+func publishCpuTemp(client influxdb2.Client, bucket, org, server string) {
 	// read sensor from system, and write to influxdb
 	writeAPI := client.WriteAPIBlocking(org, bucket)
 	cpuTemp := GetCpuTemp()
 	p := influxdb2.NewPointWithMeasurement("cpu").
-		AddTag("server", bucket).
+		AddTag("server", server).
 		AddField("temp", cpuTemp).
 		SetTime(time.Now())
 
