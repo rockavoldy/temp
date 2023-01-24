@@ -1,13 +1,9 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"os"
-	"os/exec"
-	"strconv"
-	"strings"
 	"time"
 
 	"github.com/go-co-op/gocron"
@@ -44,37 +40,8 @@ func main() {
 	s := gocron.NewScheduler(time.UTC)
 	fmt.Println("Starting scheduler...")
 	s.Every(5).Seconds().Do(func() {
-		publishCpuTemp(client, bucket, org, server)
+		PublishCPU(client, bucket, org, server)
 	})
 
 	s.StartBlocking()
-}
-
-func publishCpuTemp(client influxdb2.Client, bucket, org, server string) {
-	// read sensor from system, and write to influxdb
-	writeAPI := client.WriteAPIBlocking(org, bucket)
-	cpuTemp := GetCpuTemp()
-	p := influxdb2.NewPointWithMeasurement("cpu").
-		AddTag("server", server).
-		AddField("temp", cpuTemp).
-		SetTime(time.Now())
-
-	err := writeAPI.WritePoint(context.Background(), p)
-	if err != nil {
-		log.Fatalln(err)
-	}
-}
-
-func GetCpuTemp() int {
-	cmd := "cat /sys/class/thermal/thermal_zone0/temp"
-	out, err := exec.Command("bash", "-c", cmd).Output()
-	if err != nil {
-		log.Fatalln(err)
-	}
-	output := strings.TrimSuffix(string(out), "\n")
-	outputInt, err := strconv.Atoi(output)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	return outputInt / 1000.0
 }
