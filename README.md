@@ -25,7 +25,8 @@ Type=simple
 User=root
 Restart=always
 RestartSec=5s
-ExecStart=env INFLUX_URL=http://localhost:8086 INFLUX_TOKEN=<your-influxdb-token> INFLUX_BUCKET=<bucket-name> INFLUX_ORG=<org-name> /usr/bin/temp
+EnvironmentFile=/etc/default/temp/.env
+ExecStart=/usr/bin/temp
 PermissionsStartOnly=true
 StandardOutput=syslog
 StandardError=syslog
